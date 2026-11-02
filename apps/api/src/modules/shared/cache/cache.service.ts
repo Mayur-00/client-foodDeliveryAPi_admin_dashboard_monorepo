@@ -1,0 +1,58 @@
+import { Logger } from 'winston';
+import { redisClientType } from '../../../config/redis.config.js';
+
+export class CacheService {
+  constructor(
+    private logger: Logger,
+    private redis: redisClientType,
+  ) {}
+
+
+  async getCache(key: string): Promise<{ success: boolean; data: unknown }> {
+    try {
+      const cache = await this.redis.get(key);
+      if (!cache) {
+        this.logger.info(`there is no cache on this key: ${key}`);
+        return { success: false, data: null };
+      }
+      const data = JSON.parse(cache);
+
+      return { success: true, data: data };
+    } catch (error) {
+      this.logger.error(`failed to get cache by this key : ${key} ; error:${error}`);
+      return { success: false, data: null };
+    }
+  }
+
+  async setCache(
+    key: string,
+    freshData: unknown,
+    ttl?: number,
+  ): Promise<{ success: boolean; message: string }> {
+    try {
+      if (freshData == null) {
+        this.logger.error('Provided data is null');
+        return { success: false, message: 'Provided data is null' };
+      }
+      const expiry = ttl || 3600;
+      const data = JSON.stringify(freshData);
+      await this.redis.set(key, data, 'EX', expiry);
+
+      return { success: true, message: 'success' };
+    } catch (error) {
+      this.logger.error(`failed to set cache by this key : ${key} ; error : ${error}`);
+      return { success: false, message: 'Internal Server Error' };
+    }
+  }
+
+  async deleteCache(key: string): Promise<{ success: boolean }> {
+    try {
+      await this.redis.del(key);
+
+      return { success: true };
+    } catch (error) {
+      this.logger.error(`failed to delete cache by this key : ${key} ; error:${error}`);
+      return { success: false };
+    }
+  }
+}
