@@ -1,15 +1,17 @@
 import { relations } from "drizzle-orm";
 import { userTable } from "./user.schema.js";
 import { orderTable } from "./order.schema.js";
-import { adminSessionTable, adminTable } from "./admin.schema.js";
-import { restorantSessionTable, restorantTable } from "./restorant.schema.js";
+import { adminTable } from "./admin.schema.js";
+import {  restorantTable } from "./restorant.schema.js";
 import { menuItemTable } from "./menuItem.schema.js";
-import { riderSessionTable, riderTable } from "./rider.schema.js";
+import { riderTable } from "./rider.schema.js";
 import { deliveryAssignmentTable } from "./deliveryAssignment.schema.js";
 import { orderItemTable } from "./orderItem.schema.js";
+import { addressTable } from "./address.schema.js";
 
 export const userRelations = relations(userTable, ({ many }) => ({
   orders: many(orderTable),
+  addresses:many(addressTable)
 }));
 // export const userSessionRelations = relations(userSessionTable, ({ one }) => ({
 //   userTable: one(userTable, {
@@ -19,18 +21,13 @@ export const userRelations = relations(userTable, ({ many }) => ({
 // }));
 
 export const restorantRelations = relations(restorantTable, ({ many }) => ({
-  sessions: many(restorantSessionTable),
-  menuItems: many(menuItemTable),
+    menuItems: many(menuItemTable),
+    adresses:many(addressTable),
   orders: many(orderTable),
 }));
 
 export const riderRelations = relations(riderTable, ({ many }) => ({
-  sessions: many(riderSessionTable),
   deliveryAssignments: many(deliveryAssignmentTable),
-}));
-
-export const adminRelations = relations(adminTable, ({ many }) => ({
-  sessions: many(adminSessionTable),
 }));
 
 export const orderRelations = relations(orderTable, ({ many, one }) => ({

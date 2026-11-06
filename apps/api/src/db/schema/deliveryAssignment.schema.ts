@@ -15,13 +15,13 @@ import { userTable } from "./user.schema.js";
 import { restorantTable } from "./restorant.schema.js";
 import { riderTable } from "./rider.schema.js";
 import { orderTable } from "./order.schema.js";
-export const deliveryStatusEnum = pgEnum('delivery-status-enum', [ 'rider assigned', 'order picked up by rider', 'order deliverd']);
+export const deliveryStatusEnum = pgEnum('delivery-status-enum', [ 'STARTED', 'COMPLETED', 'CANCELLED']);
 
 export const deliveryAssignmentTable = pgTable("deliveryAssignmentTable", {
   id: uuid("id").primaryKey().defaultRandom(),
   riderId:uuid('rider_id').notNull().references(()=>riderTable.id, {onDelete:'cascade'}),
   orderId:uuid('order_id').notNull().references(()=>orderTable.id, {onDelete:"cascade"}),
-  status:deliveryStatusEnum().default("rider assigned").notNull(),
+  status:deliveryStatusEnum().default("STARTED").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()

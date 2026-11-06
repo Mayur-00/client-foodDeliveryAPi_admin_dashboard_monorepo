@@ -3,6 +3,9 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import { handleError } from "./middleware/error.middleware.js";
 import { userRoutes } from "./modules/user/index.js";
+import { restorantRoutes } from "./modules/restorant/index.js";
+import { riderRoutes } from "./modules/rider/index.js";
+import { adminRoutes } from "./modules/admin/index.js";
 
 export const app = express();
 app.use(
@@ -24,5 +27,8 @@ app.get("/health", (_req: Request, res: Response) => {
 });
 
 app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/restorant", restorantRoutes);
+app.use("/api/v1/rider", riderRoutes);
+app.use("/api/v1/admin", adminRoutes  );
 
 app.use(handleError);
